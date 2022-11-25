@@ -38,7 +38,9 @@ cmake_policy(SET CMP0028 NEW)
 # Enable MACOSX_RPATH (@rpath) for built dynamic libraries.
 cmake_policy(SET CMP0042 NEW)
 project(tensorflow-lite C CXX)
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+include(${CMAKE_BINARY_DIR}/../conanbuildinfo.cmake)
+conan_basic_setup(TARGETS)
+
 set(TENSORFLOW_SOURCE_DIR "" CACHE PATH
   "Directory that contains the TensorFlow project"
 )
@@ -81,8 +83,6 @@ if(TFLITE_KERNEL_TEST AND ${CMAKE_CROSSCOMPILING})
   endif()
 endif()
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(_TFLITE_ENABLE_RUY "${TFLITE_ENABLE_RUY}")
 if("${CMAKE_SYSTEM_NAME}" STREQUAL "Android")
   set(_TFLITE_ENABLE_RUY ON)
@@ -599,6 +599,13 @@ if(TFLITE_ENABLE_INSTALL)
     EXPORT ${PROJECT_NAME}Targets
     NAMESPACE ${PROJECT_NAME}::
     DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
+  )
+  install(
+    TARGETS absl_flags XNNPACK
+    EXPORT tensorflow-liteTargets
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
   )
 
   # Generate config file that's used by find_package(tensorflow-lite CONFIG).
