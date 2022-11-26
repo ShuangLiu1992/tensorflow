@@ -82,8 +82,6 @@ if(TFLITE_KERNEL_TEST AND ${CMAKE_CROSSCOMPILING})
   endif()
 endif()
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(_TFLITE_ENABLE_RUY "${TFLITE_ENABLE_RUY}")
 if("${CMAKE_SYSTEM_NAME}" STREQUAL "Android")
   set(_TFLITE_ENABLE_RUY ON)
@@ -400,13 +398,12 @@ else()
 endif()
 if(TFLITE_ENABLE_XNNPACK)
   find_package(fp16_headers REQUIRED)
-  find_package(XNNPACK REQUIRED)
   populate_tflite_source_vars("delegates/xnnpack"
     TFLITE_DELEGATES_XNNPACK_SRCS
     FILTER ".*(_test|_tester)\\.(cc|h)"
   )
   list(APPEND TFLITE_TARGET_DEPENDENCIES
-    XNNPACK
+    CONAN_PKG::xnnpack
   )
   list(APPEND TFLITE_TARGET_PUBLIC_OPTIONS "-DTFLITE_BUILD_WITH_XNNPACK_DELEGATE")
 endif()
